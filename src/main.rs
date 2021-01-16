@@ -4,7 +4,7 @@ use clap::{App as Clap, Arg};
 fn main() {
     let matches = Clap::new("Worklog")
         .version("1.0")
-        .author("Ota Klapka <klapka.ota@gmail.com>")
+        .author("Ota Klapka")
         .subcommand(Clap::new("log")
             .arg(Arg::new("message")
                 .required(true)
