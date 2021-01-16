@@ -1,5 +1,5 @@
 [package]
-name = "worklog"
+name = "rwl"
 version = "0.1.0"
 authors = ["Ota Klapka <klapka.ota@gmail.com>"]
 edition = "2018"
@@ -9,6 +9,9 @@ edition = "2018"
 [dependencies]
 clap = "3.0.0-beta.2"
 chrono = "0.4.19"
+prettytable-rs = "0.8.0"
+assert_cmd = "1.0.2"
+predicates = "1.0.6"
     [dependencies.rusqlite]
     version = "0.24.2"
     features = ["bundled", "chrono"]

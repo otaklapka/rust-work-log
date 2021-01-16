@@ -1,16 +1,7 @@
-use worklog::{App};
-use std::error::Error;
-use chrono::{DateTime, Local, NaiveDateTime, NaiveDate};
-use rusqlite::{Result};
-use clap::{App as Clap, Subcommand, Arg};
-use chrono::format::Fixed::TimezoneOffset;
+use rwl::{App};
+use clap::{App as Clap, Arg};
 
-fn main() -> Result<()> {
-    // worklog log "message" [-t="12.01.2021 14:05"]
-    // worklog delete <time>
-    // worklog set <time> "new message"
-    // worklog ls [-d=12.01.2021, -l]
-
+fn main() {
     let matches = Clap::new("Worklog")
         .version("1.0")
         .author("Ota Klapka <klapka.ota@gmail.com>")
@@ -18,43 +9,53 @@ fn main() -> Result<()> {
             .arg(Arg::new("message")
                 .required(true)
                 .index(1)
+                .about("Message to log")
             )
             .arg(Arg::new("time")
                 .short('t')
                 .takes_value(true)
+                .about("Custom message date and time (format: '10.01.2021 14:05')")
             )
+            .about("Inserts new message")
         )
         .subcommand(Clap::new("ls")
             .arg(Arg::new("date")
                 .short('d')
                 .takes_value(true)
+                .about("Date to list (format: '10.01.2021')")
             )
             .arg(Arg::new("last")
                 .short('l')
+                .about("Last day containing messages")
             )
+            .about("Lists messages")
         )
         .subcommand(Clap::new("set")
             .arg(Arg::new("id")
                 .required(true)
                 .index(1)
+                .about("ID of record")
             )
-            .arg(Arg::new("new-message")
+            .arg(Arg::new("message")
                 .index(2)
+                .about("New message")
             )
             .arg(Arg::new("time")
                 .short('t')
                 .takes_value(true)
+                .about("New date and time (format: '10.01.2021 14:05')")
             )
+            .about("Updates the record by given record ID")
         )
         .subcommand(Clap::new("delete")
             .arg(Arg::new("id")
                 .required(true)
                 .index(1)
+                .about("ID of record")
             )
+            .about("Deletes the record by given record ID")
         ).get_matches();
 
-    let app = App::new()?;
-    app.run(matches)?;
-
-    Ok(())
+    let app = App::new("database.sqlite");
+    app.run(&matches);
 }

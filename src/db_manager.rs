@@ -1,12 +1,12 @@
-use chrono::{DateTime, Local, NaiveDateTime, NaiveDate};
-use rusqlite::{params, Connection, Result, Error, RowIndex};
+use chrono::{NaiveDateTime, NaiveDate};
+use rusqlite::{params, Connection, Result, Error};
 use rusqlite::NO_PARAMS;
 
 #[derive(Debug)]
 pub struct LogRecord {
-    pub id: i32,
+    pub id: u32,
     pub message: String,
-    pub time: DateTime<Local>
+    pub time: NaiveDateTime
 }
 
 pub struct DbManager {
@@ -14,8 +14,8 @@ pub struct DbManager {
 }
 
 impl DbManager {
-    pub fn new() -> Result<DbManager> {
-        let conn = Connection::open("database.sqlite")?;
+    pub fn new(db_file_name: &str) -> Result<DbManager> {
+        let conn = Connection::open(db_file_name)?;
         conn.execute(
             "CREATE TABLE IF NOT EXISTS logs (
                   id              INTEGER PRIMARY KEY,
@@ -61,7 +61,7 @@ impl DbManager {
         row_iterator
     }
 
-    pub fn update(&self, id: i32, message: Option<String>, time: Option<NaiveDateTime>) -> Result<()> {
+    pub fn set(&self, id: u32, message: Option<&str>, time: Option<NaiveDateTime>) -> Result<()> {
         if let Some(new_message) = message {
             self.connection.execute(
                 "UPDATE logs SET message = ?1 WHERE id = ?2",
@@ -79,9 +79,7 @@ impl DbManager {
         Ok(())
     }
 
-    pub fn delete(&self, id: i32) -> Result<()> {
-        self.connection.execute("DELETE FROM logs WHERE id = ?1", params![id])?;
-
-        Ok(())
+    pub fn delete(&self, id: u32) -> Result<usize, Error> {
+        self.connection.execute("DELETE FROM logs WHERE id = ?1", params![id])
     }
 }
